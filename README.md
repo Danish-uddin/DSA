@@ -1,2 +1,2 @@
 # DSA
-data structures, algorithms made easy!
+DSA and OOPS made easy
