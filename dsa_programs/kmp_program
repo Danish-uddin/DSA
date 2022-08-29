@@ -1,0 +1,62 @@
+#include<iostream>
+using namespace std;
+
+void findPrefix(string pattern, int m, int prefArray[]) {
+  int prefix_ind=0;
+  prefArray[0] = 0; //first place is always 0 as no prefix
+
+//to calc from 1 to (m-1) //start from i at 1, length at 0 //'length' is prefix 'i' is suffix
+for(int suffix_ind = 1; suffix_ind<m; suffix_ind++) {
+      if(pattern[prefix_ind] == pattern[suffix_ind]) {   //if prefix char matches suffix char--inc prefix length, add length to array
+         prefix_ind++;
+         prefArray[suffix_ind] = prefix_ind;    
+      }else {                                           //if prefix char doesn't match suffix char and prefix_ind not at '0'
+         if(prefix_ind != 0) {                          //update prefix index (take from array), suffix index (just -1)
+            prefix_ind = prefArray[prefix_ind - 1];
+            suffix_ind--;     //decrease i to avoid effect of increasing after iteration
+         }else                                          //if prefix char doesn't match suffix char and prefix_ind at '0'
+            prefArray[suffix_ind] = 0;                  //just add the count as '0' to array
+      }
+   }
+   
+
+void kmpPattSearch(string mainString, string pattern, int * locArray, int & loc) {
+  int n, m, i = 0, j = 0;
+  n = mainString.size();
+  m = pattern.size();
+  int prefixArray[m]; //prefix array as same size of pattern
+  findPrefix(pattern, m, prefixArray);
+  loc = 0;
+
+  while (i < n) {
+    if (mainString[i] == pattern[j]) {
+      i++;
+      j++;
+    }
+
+    if (j == m) {
+      locArray[loc] = i - j; //item found at i-j position.
+      loc++;
+      j = prefixArray[j - 1]; //get the prefix length from array
+    } else if (i < n && pattern[j] != mainString[i]) {
+      if (j != 0)
+        j = prefixArray[j - 1];
+      else
+        i++;
+    }
+  }
+}
+
+int main() {
+  string str = "AAAABAAAAABBBAAAAB";
+  string patt = "AAAB";
+  int locationArray[str.size()];
+  int index;
+  kmpPattSearch(str, patt, locationArray, index);
+
+  for (int i = 0; i < index; i++) {
+    cout << "Pattern found at location: " << locationArray[i] << endl;
+  }
+}
+
+
