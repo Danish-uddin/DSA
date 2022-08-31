@@ -1,0 +1,94 @@
+Within same package same class/nested class ---------------CLASS
+Within same package non-subclass (any other class)---------PACKAGE
+Within same package subclass-------------------------------SUBCLASS
+Within different package subclass--------------------------SUBCLASS
+Within different package non-subclass----------------------GLOBAL/WORLD
+
+main package p1
+
+package p1;
+public class one{----------------------------------------//one package can have only one public class
+
+  public var1;-------------------------------------------//can directly access in non_sub_class as obj1.var1
+  private var2;------------------------------------------//cannot directly access outside class as obj1.var2-
+			  				   -accessible only with in same class
+  protected var3;----------------------------------------//similar to public-can be accessed in non_sub_class class as obj1.var3-
+			  				   -but one condition diff with public wrt (diff package)
+  default var4;-------------------------------------------//anywhere withiin same package (//can directly access outside class as obj1.var1)/within class
+
+  public String pubFunc(){--------------------------------//can directly access in non_sub_class as obj1.pubFunc()
+	int res = var1+var2+var3+var4;--------------------//all accessible witin same package-same class
+	return "public";}
+
+  String defFunc(){ return "default";}--------------------//can be accessed in same package as obj1.defFunc()
+  private String priFunc(){ return "private";}------------//cannot access outside as obj1.priFunc-only visible inside class
+  protected String protFunc(){ return "protected";}-------//similar to public-can be accessed outside class as obj1.protfunc()-
+							    -but one condition diff with public
+
+}
+
+class two{------------------------------------------------//multiple default classes can be made
+}
+private class three{}-------------------------------------//java doesn't support private class
+protected class four{}------------------------------------//java doesn't support protected class
+
+class sub_class extends one{
+
+	public int subVar=99;-----------------------------//can be accessed in non_sub_class using child class obj only
+
+	void sample_function() {			  //BELOW RESULTS SAME AS SUBCLASS
+		System.out.println(var1);-----------------//public accessible within subclass
+		//System.out.println(var2);---------------//private not accessible from subclass (only within class)
+		System.out.println(var3);-----------------//protected accessible within subclass
+		System.out.println(var4);-----------------//default accessible within subclass
+	}
+}
+
+public class Test101MainClass {---------------------------//non sub class
+
+//trying to reach class in an external package p2
+//first 'import p2.p2two'
+class subclass_of_ext_p2two extends p2two{----------------//sub class for a class from external package
+}
+
+public static void main(String[] args) {
+
+	//System.out.println(var1+var2+var3+var4);----------//cannot access anything in a non-sub class without class object
+
+	one obj1 = new one();				    //BELOW RESULTS SAME AS SUBCLASS
+	System.out.println(obj1.var1);----------------------//public accessible within subclass
+	//System.out.println(obj1.var2);--------------------//private not accessible from subclass (only within class)
+	System.out.println(obj1.var3);----------------------//protected accessible within subclass
+	System.out.println(obj1.var4);----------------------//default accessible within subclass
+	
+							     //access using parent class obj or child class obj?
+	sub_class obj2 = new sub_class();--------------------//can use child class object to call parent class properties
+	System.out.println(obj2.var1);-----------------------//but can't use parent to call child properties
+	
+	//System.out.println(obj1.subVar); --error ----------//but can't use parent to call child properties
+
+//trying to reach class in an external package p2
+//first 'import p2.p2two'
+//class subclass_of_ext_p2two extends p2two{
+//}
+		ext_sub_class obj3 = new ext_sub_class();
+		System.out.println(obj3.extvar1);-------------//can access external package protected member using subclass object
+
+}
+}
+
+external package p2 //MOSTLY ABOUT PROTECTED, DEFAULT
+
+package p2;
+public class p2one{
+
+public int exVar1=11; //ext pack can acc easily
+protected int exVar1=11;--------------------------------------//can be accessed from external package (using subclass object) if extended/inherited
+int exVar1=11;------------------------------------------------//cant be accessed from external package even if extended/inherited
+private int exVar1=11; //within class scope-ext pack can't access
+
+}
+
+class p2two{--------------------------------------------------//default class cannot be visible from external package or class
+/*---protperties---*/
+}
